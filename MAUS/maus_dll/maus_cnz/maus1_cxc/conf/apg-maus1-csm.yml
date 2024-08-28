@@ -1,0 +1,48 @@
+csm-version: '1.0'
+components:
+- uid: cphw.maus1
+  name: cphw-maus1
+  description: CPHW MAUS1 component
+  availability-manager: AMF
+  software:
+    sdp: ERIC-CPHW_MAUS1BIN-CXC1372134
+  supersedes:
+  - base-component: ERIC-APG_MAUS1
+  availability-properties:
+    control-policy:
+      type: ADVANCED
+    multiplicity-policy:
+      node-active: ONE
+      node-standby: NONE
+      node-active-standby: 'NO'
+      cluster-active: MANY
+      cluster-standby: NONE
+    lifecycle-control:
+      prefix: /opt/ap/cphw/bin
+      start: cphw_maus1_clc instantiate
+      stop: cphw_maus1_clc cleanup
+      monitor-keys:
+      - key: cphw_maus1d_hck
+        period: 240s
+        timeout: 180s
+      promote-demote-timeout: 200s
+      migrate-timeout: 60s
+      recovery-policy: COMPONENT_RESTART
+      start-stop-timeout: 100s
+  constraints:
+    installation:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+    upgrade:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+  meta-data:
+    component-version: 14.0.4-0
+    deliverable:
+      deployment-package: cphw_maus1-14.0.4-0-deployment-CXC1372134.tar.gz
+      runtime-package: cphw_maus1-14.0.4-0-runtime-CXC1372134.tar.gz
+    software:
+    - file-name: CPHW_MAUS1BIN-CXC1372134_14-R1E.x86_64.sdp
+      bundle-name: ERIC-CPHW_MAUS1BIN-CXC1372134_14-R1E

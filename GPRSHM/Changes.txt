@@ -1,0 +1,31 @@
+This files describes the changes for the GPRSHM APG service
+===========================================================
+
+2017-05-11  AXE18A_PROJ_LSV07_RFD
+   - Merged label I05_AXE18A_APG43L_3_4_DEV.
+
+2017-05-11  I05_AXE18A_APG43L_3_4_DEV
+   - Fix for TR HV77554.
+
+2017-02-17  AXE18A_PROJ_LSV03_RFD
+   - Merged label I04_AXE18A_APG43L_3_4_DEV.
+
+2017-02-16  I04_AXE18A_APG43L_3_4_DEV
+   - Merged label D04_XJOSCHU_GPRSHM_S1707.
+   - Merged label D02_XDARGAS_GPRSHM_S1707.
+
+2017-02-10  I03_AXE18A_APG43L_3_4_DEV
+   - Merged label D02_XJOSCHU_GPRSHM_S1707.
+
+2017-02-09  I02_AXE18A_APG43L_3_4_DEV
+   - Merged label D01_XDARGAS_GPRSHM_S1707.
+   - Merged label D01_XJOSCHU_GPRSHM_S1707.
+     
+2017-02-02  AXE18A_PROJ_LSV02_RFD
+   - Merge label I01_AXE18A_APG43L_3_4_DEV.
+     (Was not delivered as there was no APG delivery for LSV02)
+
+2017-02-02  I01_AXE18A_APG43L_3_4_DEV
+   - Creation of development branch by merging from label
+     D01_XJOSCHU_VBC_VGPR_S1704.
+

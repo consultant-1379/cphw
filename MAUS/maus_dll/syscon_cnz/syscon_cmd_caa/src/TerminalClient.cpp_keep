@@ -1,0 +1,96 @@
+//#include <sys/poll.h>
+#include <iostream>
+
+#include "TerminalClient.h"
+#include "AppTrace.h"
+#include "TerminalClient.h"
+
+using namespace std;
+
+static const int MSG_SIZE_IN_BYTES = 2048;
+static const int MAX_NO_OF_HANDLES = 64;
+static const unsigned MAX_OF_TIMEOUT_MS = 2500;
+
+TerminalClient::TerminalClient(const char* name, const char* domain, int state):
+		mResultCode(RC_OK),
+		mClient(), mSession(), mName(name), mDomain(domain),
+		mState(state),
+		mConn(false)
+		//mSide(-1)
+		//mGmThread(), mRunning(false)
+{
+    //newTRACE(("TerminalClient::TerminalClient() ctor", 0));
+}
+
+#if 0
+int TerminalClient::getSide()
+{
+	// If DSD is not connected, the side information is not valid
+	if (!mConn)
+		return -1;
+
+	// If already get the side information, return
+	if (mSide != -1)
+		return mSide;
+
+	// Try to get side information from DSD
+	ACS_DSD_Node  node;
+	if (mSession.get_local_node(node) < 0)
+		return mSide = -1;
+
+	return mSide = node.node_side;
+}
+#endif
+
+TerminalClient::~TerminalClient()
+{
+    if (mConn)
+    	mSession.close();
+}
+
+bool TerminalClient::connect()
+{
+    
+    std::vector<ACS_DSD_Node>  mReachableNodes;
+    std::vector<ACS_DSD_Node>  mUnreachableNodes;
+
+    //cout << "TerminalClient::connect() name <" << mName << "> domain <" << mDomain << ">" << endl;
+	if(mClient.query(mName, mDomain, acs_dsd::SYSTEM_TYPE_AP, mReachableNodes, mUnreachableNodes) < 0)
+	{
+		//cout << "failed to query for name <" << mName << "> domain <" << mDomain << ">" << endl;
+        mResultCode = RC_NOCONTACT;
+        return mConn = false;
+	}
+
+	if (mClient.connect(mSession, mName, mDomain, 2001, acs_dsd::NodeStateConstants(mState)) < 0) {
+        mResultCode = RC_NOCONTACT;
+        return mConn = false;
+	}
+    return mConn = true;
+}
+
+ssize_t TerminalClient::send_blocking(void* buf, size_t size)
+{
+    ssize_t res = mSession.sendf(buf, size, MSG_NOSIGNAL);
+    //ssize_t res = mSession.send(buf, size);
+    if (res < 0) {
+        mResultCode = RC_INTERNAL_ERROR;
+        return res;
+    }
+
+//#if 0
+    // Reuse the buffer for reponse message
+    memset(buf, 0, size);
+    
+    // Prepare to receive the return message
+    if ((res = mSession.recv(buf, size, MAX_OF_TIMEOUT_MS)) < 0) {
+        mResultCode = RC_INTERNAL_ERROR;
+        return res;
+    }
+
+//#endif
+
+    mResultCode = RC_OK;
+    return res;
+}
+

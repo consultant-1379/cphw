@@ -1,0 +1,43 @@
+############################################################################## 
+# 
+# CPHW/APG GPRSHM - CS used to integrate to development branch 
+# 
+############################################################################## 
+  
+element * CHECKEDOUT  
+  
+## CQS ## 
+element /vobs/cqs/... FTM_2_3_3_T16_R1A01 
+ 
+#SDK (AD_SDK, ACE, BOOST, CMW, COM, LDE, DX, SEC) 
+element * SDK_3_3_0 
+ 
+#For MODELS 
+element * .../io_apg43L_34z/LATEST 
+ 
+#For Tools 
+element * AXE17A_CI 
+element * AXE18A_TOOLS_1 
+element * AXE17A_TOOLS_1_3
+
+## CPHW/APG
+
+element /vobs/HW/Products/APG/GPRSHM/CS/... /main/LATEST
+
+element /vobs/HW/... .../apg43l_3_4_dev/LATEST
+element /vobs/HW/... .../apg43l_3_4_del/LATEST -mkbranch apg43l_3_4_dev
+element /vobs/HW/... .../apg43l_3_4/LATEST -mkbranch apg43l_3_4_del
+element /vobs/HW/... .../io_apg43L/LATEST -mkbranch apg43l_3_4 
+element /vobs/HW/... /main/LATEST -mkbranch io_apg43L
+element /vobs/HW/... CPHW_CAA146650_R1A06
+element /vobs/HW/... /main/0
+
+element * .../apg43l_3_4/LATEST
+element * .../io_apg43L/LATEST -mkbranch apg43l_3_4
+element * /main/LATEST -mkbranch io_apg43L
+
+
+element * -none 
+ 
+############################################################################## 
+

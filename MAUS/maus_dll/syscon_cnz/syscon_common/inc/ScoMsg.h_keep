@@ -1,0 +1,220 @@
+/*
+ * ScoMsg.h
+ *
+ *  Created on: Nov 02, 2015
+ *      Author: xdtthng
+ */
+
+#ifndef SYSTERM_MSG_H
+#define SYSTERM_MSG_H
+
+#include <stdint.h>
+#include <cstring>
+
+#pragma pack(push, 1)
+
+class Version
+{
+
+public:
+	Version(int16_t major = 0, int16_t minor = 0) { set(major, minor); }
+
+	int16_t major() const { return m_major; }
+	int16_t minor() const { return m_minor; }
+	void set(int16_t major, int16_t minor) { m_major = major; m_minor = minor; }
+	void major(int16_t val) { m_major = val; }
+	void minor(int16_t val) { m_minor = val; }
+
+	bool operator==(Version rhs) const { return m_major == rhs.m_major && m_minor == rhs.m_minor; }
+	bool operator!=(Version rhs) const { return !(*this == rhs); }
+	bool operator>(Version rhs) const { return m_major > rhs.m_major || m_minor > rhs.m_minor; }
+	bool operator>=(Version rhs) const { return ((*this > rhs) || (*this == rhs)); }
+	bool operator<=(Version rhs) const { return !(*this > rhs); }
+	bool operator<(Version rhs) const { return !(*this >= rhs); }
+
+private:
+	int16_t m_major;
+	int16_t m_minor;
+};
+//
+// inlines
+//===========================================================================
+#pragma pack(pop)
+
+class ScoMsg
+{
+public:
+	enum ScoProtT
+	{
+		SCO_PROT_ID = 0xbead
+	};
+
+	enum {
+		VER_MAJOR = 1,
+		VER_MINOR = 0,
+	};
+
+	enum {
+		MSG_SIZE_IN_BYTES = 2048,
+		CMD_TOSOL_LEN = 512,
+		DATA_FROMSOL_LEN = 2000,
+		SOL_IP_ADDR_LEN = 16
+	};
+
+	enum PrimitiveT
+	{
+		FirstPrimitive = 0,
+		Sco_Connect_prim = FirstPrimitive,
+		Sco_ConnectRsp_prim,
+		Sco_Echo_prim,
+		Sco_EchoRsp_prim,
+		Sco_DataFromSol_prim = Sco_EchoRsp_prim,
+		LastPrimitive = Sco_DataFromSol_prim
+	};
+
+	enum ErrorCodeT
+	{
+		FirstErrorCode 				= 0,
+		Success 					= FirstErrorCode,
+		InputConfigError			= 1,
+		ConnectionExsits			= 2,
+		SolIPAddressNotDefined		= 3,
+		ServerClosingDown			= 4,
+		LastErrorCode				= ServerClosingDown
+	};
+
+	class MsgHeader
+	{
+	protected:
+		MsgHeader(PrimitiveT prim, uint32_t seqno, int maj, int min) :
+				m_protId(SCO_PROT_ID),
+				m_version(maj, min),
+				m_primitive(prim),
+				m_seqNumber(seqno),
+				m_reserved(0)
+				{ }
+	public:
+
+		PrimitiveT primitive() const { return m_primitive; }
+		ScoProtT protId() const { return m_protId; }
+		Version version() const { return m_version; }
+		int32_t seqNumber() const { return m_seqNumber; }
+		int32_t	reserved() const { return m_reserved; }
+	private:
+		ScoProtT		m_protId;
+		Version			m_version;
+		PrimitiveT		m_primitive;
+		uint32_t		m_seqNumber;
+		int32_t			m_reserved;
+	};
+
+	class Sco_ConnectMsg: public MsgHeader
+	{
+	public:
+		static const PrimitiveT s_primitive;
+		Sco_ConnectMsg( int cpId = 0xffff, int side = 0, int multiCpSystem = 0,
+				int seq = 1234,
+				int maj = VER_MAJOR, int min = VER_MINOR):
+			MsgHeader(s_primitive, seq, maj, min),
+			m_cpId(cpId), m_side(side), m_multiCpSystem(multiCpSystem)
+		{
+		};
+
+		int32_t	getCpId() const { return m_cpId; }
+		int32_t	getCpSide() const { return m_side; }
+		int32_t	getMultiCpSystem() const { return m_multiCpSystem; }
+
+	private:
+		int32_t	m_cpId;
+		int32_t	m_side;
+		int32_t	m_multiCpSystem;
+	};
+
+	class Sco_ConnectRspMsg: public MsgHeader
+	{
+	public:
+		static const PrimitiveT s_primitive;
+		Sco_ConnectRspMsg(int32_t error, uint32_t seq, uint32_t len1 = 0, const char* addr1 = 0,
+				uint32_t len2 = 0, const char* addr2 = 0,
+					int maj = VER_MAJOR, int min = VER_MINOR):
+			MsgHeader(s_primitive, seq, maj, min), m_error(error)
+			{
+				m_len1 = len1 > uint32_t(SOL_IP_ADDR_LEN) ? uint32_t(SOL_IP_ADDR_LEN) : len1;
+				m_len2 = len2 > (uint32_t)SOL_IP_ADDR_LEN ? (uint32_t)SOL_IP_ADDR_LEN : len2;
+				memset(m_ipAddr1, 0, SOL_IP_ADDR_LEN);
+				memset(m_ipAddr2, 0, SOL_IP_ADDR_LEN);
+				strncpy(m_ipAddr1, addr1, len1);
+				strncpy(m_ipAddr2, addr2, len2);
+
+			};
+		int32_t	error() const { return m_error; }
+		const char*	getIpAddr(int n = 0) const { return n? m_ipAddr2 : m_ipAddr1; }
+		uint32_t getIpAddrLen(int n = 0) { return n ? m_len2 : m_len1; }
+	private:
+		int32_t		m_error;
+		uint32_t	m_len1;
+		uint32_t	m_len2;
+		char		m_ipAddr1[SOL_IP_ADDR_LEN];
+		char		m_ipAddr2[SOL_IP_ADDR_LEN];
+	};
+
+	class Sco_EchoMsg: public MsgHeader
+	{
+	public:
+		static const PrimitiveT s_primitive;
+		Sco_EchoMsg(int cpId = 0xffff, int side = 0, int multiCpSystem = 0,
+				int seq = 1234,
+				int maj = VER_MAJOR, int min = VER_MINOR):
+			MsgHeader(s_primitive, seq, maj, min),
+			m_cpId(cpId), m_side(side), m_multiCpSystem(multiCpSystem)
+		{
+		};
+
+		int32_t	getCpId() const { return m_cpId; }
+		int32_t	getCpSide() const { return m_side; }
+		int32_t	getMultiCpSystem() const { return m_multiCpSystem; }
+
+	private:
+		int32_t		m_cpId;
+		int32_t		m_side;
+		int32_t		m_multiCpSystem;
+	};
+
+	class Sco_EchoRspMsg: public MsgHeader
+	{
+	public:
+		static const PrimitiveT s_primitive;
+		Sco_EchoRspMsg(int32_t error, uint32_t seq, int maj = VER_MAJOR, int min = VER_MINOR):
+			MsgHeader(s_primitive, seq, maj, min), m_error(error)
+			{};
+		int32_t	error() const { return m_error; }
+	private:
+		int32_t		m_error;
+	};
+
+
+public:
+	ScoMsg()	{ reset(); }
+	char* addr() { return reinterpret_cast<char*>(m_buffer); }
+	const char* addr() const { return reinterpret_cast<const char*>(m_buffer); }
+	MsgHeader* msgHeader() { return reinterpret_cast<MsgHeader*>(addr()); }
+	const MsgHeader* msgHeader() const { return reinterpret_cast<const MsgHeader*>(addr()); }
+
+	void reset()
+	{
+		memset(m_buffer, 0, MSG_SIZE_IN_BYTES);
+	}
+
+private:
+	char		m_buffer[MSG_SIZE_IN_BYTES];
+
+};
+
+std::ostream& operator<<(std::ostream& os, const Version& v);
+std::ostream& operator<<(std::ostream& os, const ScoMsg::MsgHeader& msg);
+std::ostream& operator<<(std::ostream& os, const ScoMsg::Sco_ConnectMsg& msg);
+std::ostream& operator<<(std::ostream& os, const ScoMsg::Sco_ConnectRspMsg& msg);
+std::ostream& operator<<(std::ostream& os, const ScoMsg::Sco_EchoMsg& msg);
+std::ostream& operator<<(std::ostream& os, const ScoMsg::Sco_EchoRspMsg& msg);
+
+#endif // SYSTERM_MSG_H

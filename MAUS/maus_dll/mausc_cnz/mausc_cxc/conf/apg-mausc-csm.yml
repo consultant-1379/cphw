@@ -1,0 +1,48 @@
+csm-version: '1.0'
+components:
+- uid: cphw.mausc
+  name: cphw-mausc
+  description: CPHW MAUSC component
+  availability-manager: AMF
+  software:
+    sdp: ERIC-CPHW_MAUSCBIN-CXC1372147
+  supersedes:
+  - base-component: ERIC-APG_MAUSC
+  availability-properties:
+    control-policy:
+      type: ADVANCED
+    multiplicity-policy:
+      node-active: ONE
+      node-standby: ONE
+      node-active-standby: 'NO'
+      cluster-active: ONE
+      cluster-standby: ONE
+    lifecycle-control:
+      prefix: /opt/ap/cphw/bin
+      start: cphw_mausc_clc instantiate
+      stop: cphw_mausc_clc cleanup
+      monitor-keys:
+      - key: cphw_mauscd_hck
+        period: 240s
+        timeout: 180s
+      promote-demote-timeout: 200s
+      migrate-timeout: 60s
+      recovery-policy: COMPONENT_RESTART
+      start-stop-timeout: 100s
+  constraints:
+    installation:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+    upgrade:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+  meta-data:
+    component-version: 11.0.6-0
+    deliverable:
+      deployment-package: cphw_mausc-11.0.6-0-deployment-CXC1372147.tar.gz
+      runtime-package: cphw_mausc-11.0.6-0-runtime-CXC1372147.tar.gz
+    software:
+    - file-name: CPHW_MAUSCBIN-CXC1372147_11-R1G.x86_64.sdp
+      bundle-name: ERIC-CPHW_MAUSCBIN-CXC1372147_11-R1G

@@ -1,0 +1,24 @@
+2019-05-14 * APG43L_3_7_LSV06
+ - FIXED TR HX66792 
+   Console hangs when syscon command given with wrong options connected from AP console
+
+2018-02-28 * APG43L_3_5_LSV08
+  - FIXED TR HW45812 
+    APG43L: SYSCON command is not working as expected on SMX configuration
+
+2017-11-15 * AXE18B_PROJ_LSV04
+  - Merged D02_TEISDEL_GEP7_SOL_SUPPORT.
+
+
+2016-06-11 * I01_APZ23_SYSCON_S1625_INTEGRATION
+  - Merged D01_THNG_APG_SWMAU_SYSCON_LSV12.
+
+2016-05-11 * I02_APZ23_SYSCON_S1619_INTEGRATION
+  - Merged D04_THNG_APG_SWMAU_SYSCON_LSV10
+  
+2016-05-11 * I01_APZ23_SYSCON_S1619_INTEGRATION
+  - Merged D01_S1619_SYSCON_SLES12_MERGE
+  
+2016-05-11 * D01_S1619_SYSCON_SLES12_MERGE
+  - Applied label on Gialunca changes on sles12_cp_on_ap/LATEST branch.
+    Includes D03_THNG_APG_MAUS_LSV10 change. 

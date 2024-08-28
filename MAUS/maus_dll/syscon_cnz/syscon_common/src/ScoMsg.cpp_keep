@@ -1,0 +1,67 @@
+/*
+ * ScoMsg.cpp
+ *
+ *  Created on: Nov 2, 2015
+ *      Author: xdtthng
+ */
+
+#include <iostream>
+#include "ScoMsg.h"
+
+using namespace std;
+
+const ScoMsg::PrimitiveT ScoMsg::Sco_ConnectMsg::s_primitive 	= ScoMsg::Sco_Connect_prim;
+const ScoMsg::PrimitiveT ScoMsg::Sco_ConnectRspMsg::s_primitive = ScoMsg::Sco_ConnectRsp_prim;
+const ScoMsg::PrimitiveT ScoMsg::Sco_EchoMsg::s_primitive = ScoMsg::Sco_Echo_prim;
+const ScoMsg::PrimitiveT ScoMsg::Sco_EchoRspMsg::s_primitive = ScoMsg::Sco_EchoRsp_prim;
+
+ostream& operator<<(ostream& os, const Version& v)
+{
+	return os << dec << "<" << v.major() << "><" << v.minor() << "><" << ">";
+}
+
+ostream& operator<<(ostream& os, const ScoMsg::MsgHeader& msg)
+{
+	os << hex << "<" << msg.protId() << "><" << dec
+			<< msg.version() << "><"
+			<< msg.primitive() << "><"
+			<< msg.seqNumber() << "><"
+			<< msg.reserved() << ">>";
+	return os;
+}
+
+ostream& operator<<(ostream& os, const ScoMsg::Sco_ConnectMsg& msg)
+{
+	os << "Sco_ConnectMsg "
+			<< static_cast<const ScoMsg::MsgHeader&>(msg)
+			<< "<" << msg.getCpId() << ">"
+			<< "<" << msg.getCpSide() << ">"
+			<< "<" << msg.getMultiCpSystem() << ">";
+	return os;
+}
+
+ostream& operator<<(ostream& os, const ScoMsg::Sco_ConnectRspMsg& msg)
+{
+	os << "Sco_ConnectRspMsg "
+			<< static_cast<const ScoMsg::MsgHeader&>(msg)
+			<< "<" << msg.error() << ">";
+	return os;
+}
+
+ostream& operator<<(ostream& os, const ScoMsg::Sco_EchoMsg& msg)
+{
+	os << "Sco_EchoMsg "
+			<< static_cast<const ScoMsg::MsgHeader&>(msg)
+			<< "<" << msg.getCpId() << ">"
+			<< "<" << msg.getCpSide() << ">"
+			<< "<" << msg.getMultiCpSystem() << ">";
+	return os;
+}
+
+ostream& operator<<(ostream& os, const ScoMsg::Sco_EchoRspMsg& msg)
+{
+	os << "Sco_EchoRspMsg "
+			<< static_cast<const ScoMsg::MsgHeader&>(msg)
+			<< "<" << msg.error() << ">";
+	return os;
+}

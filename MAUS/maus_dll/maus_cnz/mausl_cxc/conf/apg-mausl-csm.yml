@@ -1,0 +1,27 @@
+csm-version: '1.0'
+components:
+- uid: cphw.mausl
+  name: cphw-mausl
+  description: CPHW MAUSL component
+  availability-manager: NONE
+  software:
+    sdp: ERIC-CPHW_MAUSLBIN-CXC1372174
+  supersedes:
+  - software: ERIC-CPHW_MAUSLBIN-CXC1372174
+  constraints:
+    installation:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+    upgrade:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+  meta-data:
+    component-version: 9.0.2-0
+    deliverable:
+      deployment-package: cphw_mausl-9.0.2-0-deployment-CXC1372174.tar.gz
+      runtime-package: cphw_mausl-9.0.2-0-runtime-CXC1372174.tar.gz
+    software:
+    - file-name: CPHW_MAUSLBIN-CXC1372174_9-R1C.x86_64.sdp
+      bundle-name: ERIC-CPHW_MAUSLBIN-CXC1372174_9-R1C

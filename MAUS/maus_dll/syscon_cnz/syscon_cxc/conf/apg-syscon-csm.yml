@@ -1,0 +1,27 @@
+csm-version: '1.0'
+components:
+- uid: cphw.syscon
+  name: cphw-syscon
+  description: CPHW SYSCON component
+  availability-manager: NONE
+  software:
+    sdp: ERIC-CPHW_SYSCONBIN-CXC1372150
+  supersedes:
+  - software: ERIC-CPHW_SYSCONBIN-CXC1372150
+  constraints:
+    installation:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+    upgrade:
+      after:
+      - component: acs.lct.lib
+        method: DIFFERENT-STEP
+  meta-data:
+    component-version: 10.0.1-0
+    deliverable:
+      deployment-package: cphw_syscon-10.0.1-0-deployment-CXC1372150.tar.gz
+      runtime-package: cphw_syscon-10.0.1-0-runtime-CXC1372150.tar.gz
+    software:
+    - file-name: CPHW_SYSCONBIN-CXC1372150_10-R1B.x86_64.sdp
+      bundle-name: ERIC-CPHW_SYSCONBIN-CXC1372150_10-R1B
